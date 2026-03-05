@@ -1,0 +1,126 @@
+Window Function Examples:
+
+A) compare each employee's salary with the average salary in his or her department:
+
+B) Using Order by to sort the data
+
+C) 
+
+Answers:
+
+A)
+SELECT deptno, empno, sal, avg(sal) OVER (PARTITION BY depname) FROM empsalary;
+
+B)
+SELECT deptno, empno, sal,
+       rank() OVER (PARTITION BY deptno ORDER BY sal DESC)
+FROM emp;
+
+Window Functions:
+
+1) Rank Employees by Salary Within Each Department
+
+2) Show Average Salary Per Department Alongside Each Employee
+
+3) Find First and Last Hired Employee in Each Department
+
+4) Compare Employee Salary to Department Average (difference between employee salary and dept average)
+
+5) Use ROW_NUMBER() to Assign Unique Row Number in Department
+
+6) Use LEAD() and LAG() to Compare With Next/Previous Employee Salary
+
+7) Calculate Percentile Rank of Salaries Across All Employees
+
+8) Use NTILE() to Divide Employees into Salary Quartiles
+
+9) Show Department-wise Min, Max, and Median Salary with Grouping
+
+10) Get Running Total of Salaries Ordered by Hire Date
+
+Answers:
+
+1) 
+SELECT 
+    deptno, 
+    ename, 
+    sal,
+    RANK() OVER (PARTITION BY deptno ORDER BY sal DESC) AS salary_rank
+FROM emp;
+
+2)
+SELECT 
+    ename, 
+    deptno, 
+    sal,
+    AVG(sal) OVER (PARTITION BY deptno) AS avg_salary
+FROM emp;
+
+3)
+SELECT 
+    deptno, 
+    ename, 
+    hiredate,
+    FIRST_VALUE(ename) OVER (PARTITION BY deptno ORDER BY hiredate) AS first_hired,
+    LAST_VALUE(ename) OVER (PARTITION BY deptno ORDER BY hiredate RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_hired
+FROM emp;
+
+4)
+SELECT 
+    ename, 
+    deptno, 
+    sal,
+    ROUND(AVG(sal) OVER (PARTITION BY deptno), 2) AS avg_salary,
+    ROUND(sal - AVG(sal) OVER (PARTITION BY deptno), 2) AS diff_from_avg
+FROM emp;
+
+5)
+SELECT 
+    deptno, 
+    ename, 
+    sal,
+    ROW_NUMBER() OVER (PARTITION BY deptno ORDER BY sal DESC) AS row_num
+FROM emp;
+
+6)
+SELECT 
+    ename, 
+    deptno, 
+    sal,
+    LAG(sal) OVER (PARTITION BY deptno ORDER BY hiredate) AS prev_salary,
+    LEAD(sal) OVER (PARTITION BY deptno ORDER BY hiredate) AS next_salary
+FROM emp;
+
+7)
+SELECT 
+    ename, 
+    sal,
+    PERCENT_RANK() OVER (ORDER BY sal) AS salary_percent_rank
+FROM emp;
+
+8)
+SELECT 
+    ename, 
+    sal,
+    NTILE(4) OVER (ORDER BY sal DESC) AS salary_quartile
+FROM emp;
+
+9)
+SELECT 
+    deptno,
+    ename,
+    sal,
+    MIN(sal) OVER (PARTITION BY deptno) AS min_sal,
+    MAX(sal) OVER (PARTITION BY deptno) AS max_sal,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY sal) OVER (PARTITION BY deptno) AS median_sal
+FROM emp;
+
+10)
+SELECT 
+    ename, 
+    hiredate, 
+    sal,
+    SUM(sal) OVER (ORDER BY hiredate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total
+FROM emp;
+
+

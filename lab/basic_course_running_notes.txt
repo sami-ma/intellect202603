@@ -1,0 +1,1042 @@
+
+
+Constraints:
+
+CREATE TABLE  employees2  (
+empno   int  Primary Key,
+ename  varchar(25)  NOT NULL ,
+designation   varchar(20),
+salary   decimal(10,2)   CHECK  (salary >= 5000),
+JoinedDay     weekdays
+)
+
+Foreign Key Constraint example:
+
+create table manufac(
+   manid int primary key,
+   man_name varchar(30),
+   address  text
+   )
+create table prds (
+   prdid  int primary key,
+   prdname varchar(30),
+   manid int references manufac(manid),
+   price decimal(10,2),
+   stock int
+   )
+
+-----------------------------------------------------------------------------------------------------------------------
+
+CREATE TYPE weekdays AS  ENUM('Monday', 'Tuesday', 'Wednesday','Thursday', 'Friday');
+
+CREATE TABLE  employees  (
+empno   int,
+ename  varchar(25),
+designation   varchar(20),
+salary   decimal(10,2),
+JoinedDay     weekdays
+)
+
+INSERT INTO employees  VALUES  (111, 'Sami',  'Trainer',  23973,  'Wednesday');
+INSERT INTO employees  VALUES  (112, 'Aaron', 'Manager',  43973,  'Monday');
+
+
+
+
+create table products (
+prdid  serial, 
+prdname varchar(30),
+manufacturer varchar(30),
+last_stocked  timestamp,
+stock  int default 50
+)
+
+
+insert into products (prdname, manufacturer, last_stocked) values ('CPU', 'INTEL', '2025-05-10 10:25:32')
+
+insert into products (prdname, manufacturer, last_stocked, stock) values ('keyboard', 'Logitech', '2025-05-15', 150)
+
+insert into products (prdname, manufacturer, last_stocked) values ('Mouse', 'Logitech','2025-06-11 10:25:32')
+insert into products (prdname, manufacturer, last_stocked, stock) values ('Printer', 'Epson','2025-06-05 10:25:32', 75)
+
+
+insert into products (prdname, manufacturer, last_stocked, stock) values ('Mouse', 'Microsoft', '2025-05-15', 100), ('MicroSD', 'SanDisk', '2025-05-17', 400)
+
+
+
+Operators - Arithemtic
+-----------------------
+select  5+3 
+select  5-3 
+select  5*3 
+select  5.0/3 
+select  5%3 
+select  5^3
+select  |/9 
+select ||/8
+select @ (3-5)
+
+Select Statement:
+-----------------
+select * from products 
+where last_stocked = '2025-05-15';
+
+select * from products 
+where last_stocked = '2025-05-15 16:47:20';
+
+select * from products 
+where  stock between 150 and 500
+
+select * from products 
+where  stock >= 150 and stock <= 500
+
+select * from products 
+where manufacturer like '%t%'
+
+select * from products 
+where manufacturer like '%T%'
+
+select * from products 
+where manufacturer ~~* '%t%'
+
+select * from products 
+where manufacturer ilike '%T%'
+
+select * from products 
+where prdname ilike '_o%'
+
+select * from products 
+where prdname ilike '____o%'
+select * from products 
+where prdname ilike '%d'
+
+select * from products 
+where prdname ilike '%o__'
+
+select * from products 
+where manufacturer ilike '%e%' 
+and manufacturer ilike '___i%'
+
+select * from products 
+where manufacturer ilike '%e%' 
+and stock = 50
+
+
+select * from products 
+where (manufacturer ilike '%e%' 
+and stock = 50) or  prdname = 'Mouse'
+
+select * from products 
+where manufacturer ilike '%e%' 
+or stock = 25 and  prdname = 'Mouse'
+
+
+Regular Expression  or Regex:
+
+*  any number of characters
+.  one character
+[]  range  [A-Z], [a-z],  [0-9]
+[ABC]   match one of the character
+^   match at the begining of string
+$  match at the end of string 
+[^ABC]   match all other charcters
+
+select * from products where manufacturer ~ '^[LT]'
+
+select * from products where manufacturer ~ '^[^LT]'
+
+
+select * from products where manufacturer ~* '[^kl]$'
+
+
+select * from products where manufacturer ~* '[kl]$'
+
+select * from products where manufacturer ~* 'l$'
+
+select * from products where manufacturer ~* '^i'
+
+
+
+
+
+Functions
+------------------------------
+
+select  ceil(12.8)
+ select  ceil(12.1)
+  select  floor(12.8)
+ select  floor(12.1)
+ select round(12.8)
+ select round(12.1)
+ 
+ select scale(2.8773)
+ select trunc(12.87383)
+ select trunc(12.87383,3)
+
+
+select 'Postgre'||'SQL'
+ select concat('postgre','sql')
+ select concat_ws('-','postgre','sql')
+  select concat_ws(',','postgre','sql')
+
+ select initcap('abdul sami')
+  select left('postgresql',4)
+  select right('postgresql',3)
+  select substr('postgresql',4,3)
+  select length('postgresql')
+
+
+select empno, ename from employees
+
+  select empno, ename, length(ename) from employees
+
+  select empno, ename, length(ename), left(ename,2) 
+  from employees
+
+  select empno, 
+  concat_ws(',',ename,designation,joinedday)  
+  from employees
+
+select empno, md5(ename), ename from employees
+  select empno, reverse(ename), ename from employees
+
+
+ select pg_sleep(3);
+
+select pg_sleep_for('1 minute');
+
+select age( '2025-05-22'::date ,'2024-10-02'::date)
+  select age( date '2025-05-22' , date '2024-10-02')
+  
+  select now() + interval '13 days'
+  select now() - interval '13 days'
+  select '2025-03-10'::date + interval '13 days'
+  select date '2025-03-10' + interval '13 days'
+  
+select to_char(now(), 'MONTH')
+select to_char(date '2024-08-26', 'MONTH')
+select to_char(date '2024-08-26', 'MON')
+select to_char(date '2024-08-26', 'MM')
+
+select ename, job, to_char(hiredate, 'DAY') 
+from  emp
+select ename, job, to_char(hiredate, 'DY') 
+from  emp
+select ename, job, to_char(hiredate, 'MONTH') 
+from  emp
+select * from emp;
+
+select 
+to_number(to_char(date '2024-08-26', 'MM'),'99') * 3
+
+select 
+to_number(to_char(date '2024-08-26', 'MM'),'00') * 3
+
+
+
+select to_number('0091', '0000')
+
+select to_number('0091', '9999')
+
+select to_date('21-MAY-2025', 'DD-MON-YYYY')
+
+select  to_date('21-MAY-2025', 'DD-MON-YYYY') + interval '13 days'
+
+Data Conversion & Formatting
+----------------------------
+
+postgres=# select to_char(7231, '99999.99')
+postgres-# ;
+  to_char
+-----------
+   7231.00
+(1 row)
+
+postgres=# select to_char(7231, '00000.00')
+;
+  to_char
+-----------
+  07231.00
+(1 row)
+
+postgres=# select to_char(7231, '00G000.00')
+;
+  to_char
+------------
+  07,231.00
+(1 row)
+
+
+postgres=# select (12,870)*2;
+ERROR:  operator does not exist: record * integer
+LINE 1: select (12,870)*2;
+                       ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+postgres=# select to_number('12,870', '99G999')*2;
+ ?column?
+----------
+    25740
+(1 row)
+
+postgres=# select to_char(to_number('12,870', '99G999')*2, '99G999');
+ to_char
+---------
+  25,740
+(1 row)
+
+postgres=#
+
+SELECT Statement:
+-----------------
+
+
+select * from emp where job = $m$CLERK$m$
+
+select * from emp where job = $$CLERK$$
+
+select * from emp where job = 'CLERK'
+
+select * from "emp" where "job" = 'MANAGER'
+
+
+create table "from" (id int)
+insert into "from" values (1),(2)
+select * from "from"
+drop table "from"
+
+select distinct  job from emp
+select * from emp order by ename desc
+select * from emp order by job desc, ename
+
+select * from emp limit 3
+select * from emp order by ename desc limit 3
+select * from emp order by ename desc limit 3
+select * from emp order by ename  limit 5
+select * from emp limit 5 offset 2
+
+select distinct job from emp 
+order by job limit 2 offset 1
+
+select sum(sal) from emp
+select avg(sal) from emp
+select min(sal) from emp
+select max(sal) from emp
+select string_agg('-',ename) from emp
+select count(*) from emp
+select count(sal) from emp
+select count(comm) from emp
+
+select sum(sal) from emp where job='CLERK'
+select avg(sal) from emp where job='CLERK'
+select min(sal) from emp where job='CLERK'
+select max(sal) from emp where job='CLERK'
+
+select string_agg(ename,',') from emp 
+where job='CLERK'
+
+select count(*) from emp where job='CLERK'
+select count(sal) from emp where job='CLERK'
+select count(comm) from emp where job='CLERK'
+
+
+select job, count(*) from emp group by job
+
+select job, sum(sal), min(sal), max(sal) 
+from emp group by job
+
+select job, string_agg(ename, ',') from emp 
+group by job
+
+select job, string_agg(ename, ','), min(sal), max(sal) 
+from emp group by job
+
+select count(sal) from emp where job='CLERK'
+
+select count(comm) from emp where job='CLERK'
+
+select job, string_agg(ename, ','), trunc(avg(sal),2) 
+from emp group by job having avg(sal)>2000 
+order by avg(sal)
+
+select job, string_agg(ename, ','), trunc(avg(sal),2) 
+from emp where sal >= 2000 
+group by  job having job in ('MANAGER', 'ANALYST')
+order by avg(sal)
+
+Advance Functions:
+
+select empno, ename, job, sal, 
+case when deptno=10 then 'Accounts'
+     when deptno=20 then 'Research'
+     when deptno=30 then 'Sales'
+     else 'Unknown Department' 
+     end as DepartmentName
+from emp;
+
+select ename, job, sal, comm, 
+(sal+coalesce(comm,0)) as Totalsal
+from emp
+
+Joins:
+------
+Inner Joins
+     EquiJoin
+     Natural Join
+     Range Join (non-equi)
+Outer Joins
+      Left Outer join
+      Right Outer Join
+      Full outer join
+Cross Join
+
+Inner Join example (EQUI) :
+
+select e.ename, e.job, e.sal, d.dname, e.deptno 
+from emp e join dept d 
+on e.deptno = d.deptno
+
+ 
+select e.ename, e.job, e.sal, d.dname, e.deptno 
+from emp e inner join dept d 
+on e.deptno = d.deptno 
+
+inner Join Example (Non-Equi):
+
+select  e.ename, e.job, e.sal, s.grade 
+from emp e inner join salgrade s 
+on e.sal > s.losal and e.sal <= s.hisal
+
+Natural Join:
+
+Natural Join is INNER JOIN/EQUI JOIN:
+    - It can be used only if both table has a common column with same spelling
+    - ON  condition is not required for Natural Join
+
+select e.ename, e.job, e.sal, d.dname, e.deptno  from emp e natural join dept d 
+
+Cross Join  (cartesian product):
+
+select e.ename, e.job, e.sal, d.dname, d.loc 
+from emp e cross join dept d; 
+
+Outer Joins:
+
+select e.ename, e.job, e.sal, d.dname, e.deptno 
+from emp e  left outer join dept d 
+on e.deptno = d.deptno
+
+select e.ename, e.job, e.sal, d.dname, e.deptno 
+from emp e  full outer join dept d 
+on e.deptno = d.deptno
+
+select e.ename, e.job, e.sal, d.dname, e.deptno 
+from emp e  right outer join dept d 
+on e.deptno = d.deptno
+
+Self Join:
+Table will be joined with itself
+
+select e.ename, m.ename as manager_name  
+from emp e  join emp m
+on e.mgr = m.empno;
+
+
+Sub Queries:
+
+select * from emp 
+where deptno = 
+(select deptno from dept where loc='CHICAGO')
+
+select * from emp 
+where sal=(select max(sal) from emp)
+
+
+
+Sub queries:
+
+/*fetch details (deptno, dname, loc)  of departments 
+ which has employees earning more than 2800
+ Use sub queries only */
+select * from dept where deptno in (
+select  deptno from emp where sal < 1000
+)
+
+/* write a query to find all employees earning 
+ * more than company average */
+
+select * from emp where sal > (
+select avg(sal) from emp )
+
+/* write a query to find all employees earning 
+ * less salary  */
+
+select * from emp where sal = 
+(select min(sal) from emp)
+
+/* write a query to find all employees earning 
+ * minimum salary in their respective depratment
+ *   */
+select * from emp e1 where e1.sal <= ( 
+select min(e2.sal) from emp e2  
+where e2.deptno = e1.deptno )
+
+
+
+/* write a query to find all employees earning 
+ * minimum salary in DALLAS
+ *   
+ * NESTED Sub queries*/
+
+select * from emp where sal <= (
+select min(sal) from emp where deptno = (
+select deptno from dept where loc='DALLAS') 
+)
+
+select e.ename, e.job, e.sal, d.dname, grade  from emp e 
+join dept d  on e.deptno=d.deptno  
+join  salgrade s 
+on e.sal between s.losal and s.hisal
+
+select e.ename, e.job, e.sal, d.dname, grade  from emp e 
+join dept d  on e.deptno=d.deptno  
+join  salgrade s 
+on e.sal between s.losal and s.hisal
+order by s.grade desc, e.ename
+
+
+Set Operations:
+
+select distinct job from emp where deptno = 10 
+union   
+select distinct job from emp where deptno = 20
+
+/* write department details 
+ * which has employees
+ */
+select * from dept d where deptno  in (
+select deptno from emp e where d.deptno = e.deptno 
+)
+
+
+/* Write a query to find employees 
+ * who are earning more than MANAGERS
+ * ALL
+ */
+
+select * from emp where  sal > all 
+(select sal from emp where job = 'MANAGER')
+
+
+
+==================   Exercise for Queries : =========================
+
+SELECT Queries
+----------------
+1. Retrieve all columns from the `emp` table.
+2. Retrieve only the `ename` and `sal` columns from the `emp` table.
+3. Retrieve distinct job titles from the `emp` table.
+4. Retrieve employees who earn more than 2000.
+5. Retrieve employees hired after January 1, 1982.
+6. Retrieve employees who do not have a manager (`mgr` is null).
+7. Retrieve employees who earn a commission (`comm` is not null).
+8. Retrieve employees whose names start with the letter 'S'.
+9. Retrieve employees whose names contain the letter 'A'.
+10. Retrieve employees sorted by their salary in descending order.
+
+JOIN Queries
+-------------
+11. Retrieve the employee name and their department name.
+12. Retrieve the employee name, job, and department location.
+13. Retrieve employees who work in the 'SALES' department.
+14. Retrieve employees who work in departments located in 'NEW YORK'.
+15. Retrieve the manager's name for each employee.
+16. Retrieve employees and their manager's name (include employees without a manager).
+17. Retrieve employees who work in the same department as their manager.
+18. Retrieve employees who work in a different department than their manager.
+19. Retrieve the department name and the number of employees in each department.
+20. Retrieve the department name and the total salary paid in each department.
+
+---
+
+SUBQUERY Queries
+----------------
+21. Retrieve employees who earn more than the average salary.
+22. Retrieve employees who earn the highest salary in their department.
+23. Retrieve employees who earn more than their manager.
+24. Retrieve employees who have the same job as their manager.
+25. Retrieve employees who were hired before their manager.
+26. Retrieve departments that have no employees.
+27. Retrieve employees who earn more than the average salary of their department.
+28. Retrieve employees who earn the same salary as at least one other employee.
+29. Retrieve employees who earn more than all employees in the 'SALES' department.
+30. Retrieve employees who earn less than the average salary of the 'RESEARCH' department.
+
+Advanced Queries
+----------------
+36. Retrieve the top 3 highest-paid employees in each department.
+37. Retrieve employee who have been with the company the longest (earliest hire date).
+38. Retrieve employee who have been with the company the shortest time (most recent hire date).
+39. Retrieve employees who earn more than the average salary of their job title.
+40. Retrieve employees who earn more than the average salary of their department and job title.
+41. Retrieve employees who have the same job as at least one other employee in their department.
+42. Retrieve employees who have the same hire date as their manager.
+43. Retrieve employees who earn more than the highest-paid employee in the 'ACCOUNTING' department.
+44. Retrieve employees who earn less than the lowest-paid employee in the 'SALES' department.
+45. Retrieve employees who have the same salary as their manager.
+
+Aggregation and Grouping Queries
+--------------------------------
+46. Retrieve the total number of employees in each department.
+47. Retrieve the total salary paid in each department.
+48. Retrieve the average salary for each job title.
+49. Retrieve the department with the highest total salary.
+50. Retrieve the job title with the highest average salary.
+
+
+Sub queries Example (addl)
+
+
+
+A) List ManagerName and count of repotees ti this manager
+B) List the ManagersName who is having max no.of emps working under him. 
+C) List the highest paid emp working under JONES.
+D) List the highest paid emp from CHICAGO
+E) List the details of most recently hired emp of dept 30
+F) List the emp's whose salary  is same as any of other employees. 
+G) List the emps whose salary is same as Scott
+H) List all employees reporting to Blake
+I) List all employees whose salary is more than company average salary
+J) List the details of all Managers
+
+=================== END of Exercise Queries =========================
+
+
+Database Hierarchy:
+-------------------
+select * from pg_database
+
+select * from pg_stat_database
+
+show search_path
+
+CREATE SCHEMA sami AUTHORIZATION postgres;  (created from DBeaver)
+
+   set search_path = sami, public;
+    create table tst2(id int)
+
+create schema abcd
+create table abcd.tst3(id int)
+insert into abcd.tst3 values (1),(3)
+select * from tst3
+set search_path = sami, abcd, public;
+select * from tst3
+insert into tst3 values (4)
+select * from tst3
+
+alter user postgres in database tcci set search_path=sami, abcd, public
+
+
+
+Array Columns:
+-----------------
+create table arrtab 
+(custid int, cname varchar(20), address text,
+phones  int[])
+
+insert into arrtab values 
+(1000, 'Brad', 'Chicago', '{1234,7890}')
+
+select * from arrtab
+select cname, phones from arrtab
+select cname, phones[1] from arrtab
+
+
+select cname, phones[1] from arrtab
+where phones[1]=1234
+
+
+Array Functions:
+
+array_append(arraycol, values)
+array_cat(arraycol[index], values)
+
+update arrtab set phones[3]=4321 where custid=1000
+
+
+JSON/JSONB:
+
+create table emp_json 
+(empno serial, emp_details JSONB);
+
+select * from emp_json
+
+insert into emp_json (emp_details) values
+('
+{
+"ename":"SMITH", 
+"job": "CLERK", 
+"sal":800.00
+}
+');
+insert into emp_json (emp_details) values
+('
+{
+"ename":"SAMI", 
+"job": "TRAINER",
+"cantech": ["PostgreSQL", "MySQL"],
+"sal":800.00
+}
+');
+
+select * from emp_json 
+
+
+select empno, emp_details -> 'ename' from emp_json
+select empno, emp_details ->> 'ename' from emp_json
+select empno, emp_details -> 'ename' from emp_json
+order by emp_details -> 'ename'
+select empno, emp_details ->> 'ename' from emp_json
+where emp_details ->> 'job' = 'CLERK'
+
+select empno, emp_details ->> 'ename' from emp_json
+where emp_details ? 'cantech'
+
+Common Tabl Expressions (CTE):
+---------------------------------
+with report  as (
+select deptno, max(sal) as maxsal 
+from emp group by deptno)  select * from emp e join report r 
+on e.deptno=r.deptno and e.sal=maxsal
+
+with emp_dept as 
+(select e.ename, e.job, e.sal, d.dname from 
+emp e join dept d on e.deptno=d.deptno) 
+select ename, job, sal, dname, grade from emp_dept join
+salgrade on sal between losal and hisal
+
+Window Function:
+--------------------
+select ename, job, sal, 
+max(sal) over (partition by job) 
+from emp  
+
+select ename, job, sal, 
+max(sal) over (partition by job order by sal desc) 
+from emp
+
+select ename, job, sal, 
+max(sal) over (partition by job order by sal desc) 
+from emp
+
+
+select ename, job, sal, 
+max(sal) over () 
+from emp
+
+ select ename, job, sal, 
+max(sal) over ( order by sal desc) 
+from emp
+
+
+select ename, job, sal, 
+sum(sal) over ( partition by job order by sal desc) 
+from emp 
+
+select ename, job, sal, 
+max(sal) over () 
+from emp
+
+ select ename, job, sal, 
+max(sal) over ( order by sal desc) 
+from emp
+
+select ename, job, sal, 
+sum(sal) over ( partition by job order by sal desc) 
+from emp 
+
+select ename, job, sal, 
+rank() over ( order by sal desc), 
+row_number() over () 
+from emp
+
+
+Table Inheritence:
+------------------
+
+CREATE TABLE customers 
+(custid serial PRIMARY KEY, 
+cname text NOT NULL, address text);
+
+CREATE TABLE customer_child 
+( ) INHERITS (customers);
+
+insert into customers (cname, address) values
+('scott', 'Florida'), ('john', 'scottdale')
+
+select * from customer_child
+
+insert into customer_child (cname, address) values
+('ravi', 'bengaluru'), ('paul', 'chennai')
+
+select * from customers
+
+select * from customer_child
+
+select * from only customers 
+
+Sequence Operations:
+--------------------
+
+
+
+create sequence cci_seq increment by 2 
+minvalue 1000
+
+create table testtab (id int, name varchar(10))
+
+insert into testtab values 
+(nextval('cci_seq'), 'aaa') 
+
+select * from testtab
+
+insert into testtab values 
+(nextval('cci_seq'), 'bbb')
+
+
+select lastval()
+
+select setval('customers_custid_seq', 100)
+
+Indexes 
+
+create index empjsonb  on emp_json using gin (emp_details)
+
+create index empename on emp (ename desc nulls last)
+
+Views:
+------
+
+create view emp_dept_view as 
+select e.ename, e.job, e.sal, d.dname, d.loc
+from emp e join dept d 
+on e.deptno=d.deptno
+
+select * from emp_dept_view
+
+select ename, dname from emp_dept_view
+
+
+create materialized view mymatview as 
+select e.ename, e.job, e.sal, d.dname, d.loc
+from emp e join dept d 
+on e.deptno=d.deptno
+
+select m.*, s.grade from mymatview m 
+join salgrade s 
+on m.sal between s.losal  and s.hisal
+
+delete from emp where ename='SMITH'
+
+select * from emp where ename='SMITH'
+
+select * from mymatview
+
+PSQL command line tool:
+-----------------------
+[postgres@pgserver ~]$ psql -U postgres -h localhost  emp
+Password for user postgres:
+psql (17.0)
+Type "help" for help.
+
+emp=# \l      --> list all databases
+
+emp=# \d
+                      List of relations
+ Schema |         Name         |       Type        |  Owner
+--------+----------------------+-------------------+----------
+ public | bonus                | table             | postgres
+ public | customer_child       | table             | postgres
+ public | customers            | table             | postgres
+ public | customers_custid_seq | sequence          | postgres
+ public | dept                 | table             | postgres
+ public | emp                  | table             | postgres
+ public | emp_dept_view        | view              | postgres
+ public | emp_json             | table             | postgres
+ public | emp_json_empno_seq   | sequence          | postgres
+ public | mymatview            | materialized view | postgres
+ public | salgrade             | table             | postgres
+ public | tst                  | table             | postgres
+(12 rows)
+
+emp=#
+
+emp=# \di
+                   List of relations
+ Schema |      Name      | Type  |  Owner   |   Table
+--------+----------------+-------+----------+-----------
+ public | customers_pkey | index | postgres | customers
+ public | empename       | index | postgres | emp
+ public | empjsonb       | index | postgres | emp_json
+(3 rows)
+
+emp=#
+
+emp=# \dv
+            List of relations
+ Schema |     Name      | Type |  Owner
+--------+---------------+------+----------
+ public | emp_dept_view | view | postgres
+(1 row)
+
+emp=#
+
+emp=# \dm
+                 List of relations
+ Schema |   Name    |       Type        |  Owner
+--------+-----------+-------------------+----------
+ public | mymatview | materialized view | postgres
+(1 row)
+
+emp=# \dn
+      List of schemas
+  Name  |       Owner
+--------+-------------------
+ public | pg_database_owner
+(1 row)
+
+emp=#
+
+postgres=# \?
+
+
+
+emp=# \conninfo
+You are connected to database "emp" as user "postgres" on host "localhost" (address "::1") at port "5432".
+emp=#
+
+
+emp=# \connect  postgres
+You are now connected to database "postgres" as user "postgres".
+postgres=# \conninfo
+You are connected to database "postgres" as user "postgres" on host "localhost" (address "::1") at port "5432".
+postgres=#
+
+postgres=# exit
+[postgres@pgserver ~]$
+
+Views:
+-----
+
+postgres=# \h create view
+Command:     CREATE VIEW
+Description: define a new view
+Syntax:
+CREATE [ OR REPLACE ] [ TEMP | TEMPORARY ] [ RECURSIVE ] VIEW name [ ( column_name [, ...] ) ]
+    [ WITH ( view_option_name [= view_option_value] [, ... ] ) ]
+    AS query
+    [ WITH [ CASCADED | LOCAL ] CHECK OPTION ]
+
+URL: https://www.postgresql.org/docs/17/sql-createview.html
+
+
+
+select * from emp where upper(ename)='TURNER'
+
+
+explain select * from emp 
+
+select (4+10+9+4+8+10+10+4)
+
+analyze emp
+
+explain select * from emp
+
+explain select * from emp
+
+explain select * from emp 
+where ename = 'TURNER'
+
+explain analyze select empno, ename, job, sal, 
+case when deptno=10 then 'Accounts'
+     when deptno=20 then 'Research'
+     when deptno=30 then 'Sales'
+     else 'Unknown Department' 
+     end as DepartmentName
+from emp;
+
+
+
+
+================= Sample Data ======================================
+
+CREATE TABLE emp (
+  empno int NOT NULL,
+  ename varchar(10) default NULL,
+  job varchar(9) default NULL,
+  mgr int default NULL,
+  hiredate date default NULL,
+  sal decimal(7,2) default NULL,
+  comm decimal(7,2) default NULL,
+  deptno int default NULL
+);
+
+
+
+
+
+CREATE TABLE dept (
+  deptno int default NULL,
+  dname varchar(14) default NULL,
+  loc varchar(13) default NULL
+);
+
+
+
+
+CREATE TABLE salgrade(
+  grade int,
+  losal decimal(7,2),
+  hisal decimal(7,2)
+);
+
+
+
+CREATE TABLE bonus(
+  ename VARCHAR(10),
+  job   VARCHAR(9),
+  sal   decimal(7,2),
+  comm  decimal(7,2)
+);
+
+
+INSERT INTO emp VALUES ('7369','SMITH','CLERK','7902','1980-12-17','800.00',NULL,'20');
+INSERT INTO emp VALUES ('7499','ALLEN','SALESMAN','7698','1981-02-20','1600.00','300.00','30');
+INSERT INTO emp VALUES ('7521','WARD','SALESMAN','7698','1981-02-22','1250.00','500.00','30');
+INSERT INTO emp VALUES ('7566','JONES','MANAGER','7839','1981-04-02','2975.00',NULL,'20');
+INSERT INTO emp VALUES ('7654','MARTIN','SALESMAN','7698','1981-09-28','1250.00','1400.00','30');
+INSERT INTO emp VALUES ('7698','BLAKE','MANAGER','7839','1981-05-01','2850.00',NULL,'30');
+INSERT INTO emp VALUES ('7782','CLARK','MANAGER','7839','1981-06-09','2450.00',NULL,'10');
+INSERT INTO emp VALUES ('7788','SCOTT','ANALYST','7566','1982-12-09','3000.00',NULL,'20');
+INSERT INTO emp VALUES ('7839','KING','PRESIDENT',NULL,'1981-11-17','5000.00',NULL,'10');
+INSERT INTO emp VALUES ('7844','TURNER','SALESMAN','7698','1981-09-08','1500.00','0.00','30');
+INSERT INTO emp VALUES ('7876','ADAMS','CLERK','7788','1983-01-12','1100.00',NULL,'20');
+INSERT INTO emp VALUES ('7900','JAMES','CLERK','7698','1981-12-03','950.00',NULL,'30');
+INSERT INTO emp VALUES ('7902','FORD','ANALYST','7566','1981-12-03','3000.00',NULL,'20');
+INSERT INTO emp VALUES ('7934','MILLER','CLERK','7782','1982-01-23','1300.00',NULL,'10');
+
+INSERT INTO dept VALUES ('10','ACCOUNTING','NEW YORK');
+INSERT INTO dept VALUES ('20','RESEARCH','DALLAS');
+INSERT INTO dept VALUES ('30','SALES','CHICAGO');
+INSERT INTO dept VALUES ('40','OPERATIONS','BOSTON');
+
+INSERT INTO salgrade VALUES (1, 700, 1200);
+INSERT INTO salgrade VALUES (2, 1201, 1400);
+INSERT INTO salgrade VALUES (3, 1401, 2000);
+INSERT INTO salgrade VALUES (4, 2001, 3000);
+INSERT INTO salgrade VALUES (5, 3001, 9999);
+
+====================== end of Sample Data ===========================
+
+
+

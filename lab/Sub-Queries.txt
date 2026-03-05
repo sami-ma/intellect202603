@@ -1,0 +1,78 @@
+Sub queries Example
+
+
+
+A) List ManagerName and count of repotees ti this manager
+
+
+B) List the ManagersName who is having max no.of emps working under him. 
+
+
+C) List the highest paid emp working under JONES.
+
+
+D) List the highest paid emp from CHICAGO
+
+
+E) List the details of most recently hired emp of dept 30
+
+
+F) List the emp's whose salary  is same as any of other employees. 
+
+
+G) List the emps whose salary is same as Scott
+
+
+H) List all employees reporting to Blake
+
+
+I) List all employees whose salary is more than company average salary
+
+
+J) List the details of all Managers
+
+
+
+
+
+Answers:
+
+A) select m.ename,count(*) from emp w,emp m
+ where w.mgr = m.empno
+ group by m.ename
+
+
+B)select m.ename,count(*) from emp w,emp m
+ where w.mgr = m.empno
+ group by m.ename
+ having count(*) = (select max(count(*)) from emp group by mgr); 
+
+C) select * from emp where sal in
+ (select max(sal) from emp where mgr in
+ (select empno from emp where ename = 'JONES')); 
+
+
+D) select * from emp where sal in 
+(select max(sal) from emp where deptno = 
+(select deptno from dept where loc='CHICAGO'))
+
+
+E) select * from emp e1 where e1.deptno=30 and e1.hiredate =
+(select max(e3.hiredate) from emp e3 where e3.deptno=30)
+
+F) select * from emp e where e.sal in 
+(select e2.sal from emp e2 where e.empno<>e2.empno)
+
+G) select * from emp e1 where e1.sal = 
+(select e2.sal from emp e2 where e2.ename='SCOTT')
+
+H) select * from emp where mgr = 
+(select empno from emp where ename='BLAKE')
+
+I) select * from emp where sal > 
+(select avg(sal) from emp)
+
+J) select * from emp where empno in 
+(select mgr from emp)
+
+
