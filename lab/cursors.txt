@@ -1,0 +1,130 @@
+Cursors
+----------
+
+Cursors
+----------
+create or replace procedure mp18() language plpgsql as
+$$
+declare
+  r record;
+  c1  cursor for select * from emp;
+begin
+ open c1;
+ loop
+  fetch c1 into r;
+  exit when not found;
+  raise notice 'row is %', r;
+ end loop;
+end;
+ $$ ;
+
+
+call mp18();
+
+
+create or replace procedure mp19() language plpgsql as
+$$
+declare
+  r record;
+  c1  cursor (dn int) for select * from emp where deptno = dn;
+begin
+ open c1(20);
+ for i in 1..5 loop
+  fetch c1 into r;
+  raise notice 'row is %', r;
+ end loop;
+ close c1;
+end;
+ $$ ;
+
+call mp19();
+
+create or replace procedure m20(int) language plpgsql as
+$$
+declare
+  r record;
+  dn int;
+  c1  cursor for select * from emp where deptno = dn;
+begin
+  dn := $1;
+ open c1;
+ for i in 1..5 loop
+  fetch c1 into r;
+  raise notice 'row is %', r;
+ end loop;
+ close c1;
+end;
+ $$ ;
+
+call m20(30)
+
+
+create or replace procedure m21() language plpgsql as
+$$
+declare
+  r record;
+  dn int;
+  c1  scroll cursor for select * from emp where deptno = dn;
+begin
+  dn := 20;
+ open c1;
+  move forward 3 from c1;
+  fetch c1 into r;
+  raise notice 'row is %', r;
+  fetch relative -2 from c1 into r;
+  raise notice 'row is %', r;
+  close c1;
+end;
+ $$ ;
+
+call m21()
+
+create or replace procedure myproc6() language plpgsql as
+$$
+declare
+  r record;
+  dn int;
+  c1  scroll cursor for select * from emp where deptno = dn;
+begin
+  dn := 20;
+ open c1;
+  move forward 3 from c1;
+  fetch c1 into r;
+  raise notice 'row is %', r;
+  fetch relative -2 from c1 into r;
+  raise notice 'row is %', r;
+  close c1;
+end;
+ $$ ;
+
+=============== process salary for all =================
+
+CREATE OR REPLACE PROCEDURE cur()
+    LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+  erec  record;
+  c1 cursor for select * from emp;
+  S  emp.sal%type;
+BEGIN
+open c1;
+loop
+  fetch from c1 into erec;
+  exit when not found;
+  CASE  erec.deptno
+	WHEN 10 THEN
+		S = erec.sal + (erec.sal * 0.15);
+	WHEN 20 THEN
+		S = erec.sal + (erec.sal * 0.10);
+	WHEN 30 THEN
+		S = erec.sal + (erec.sal * 0.12);
+	ELSE
+		raise notice 'Department % not eligible for salary revision', erec.deptno;
+  END CASE;
+ raise notice  'EmpName : %  Deptno : %  Revised Salary : %', erec.ename, erec.deptno, S;
+end loop;
+close c1;
+END;
+$BODY$;
+
+call cur()

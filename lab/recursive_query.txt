@@ -1,0 +1,20 @@
+Useful for retriviening hierarchial data saved in a single table.
+
+WITH RECURSIVE cte_name AS(
+    CTE_query_definition -- non-recursive term
+    UNION [ALL]
+    CTE_query definion  -- recursive term
+) SELECT * FROM cte_name;
+
+
+
+Example:
+
+WITH RECURSIVE team AS (
+	SELECT  empno, ename, mgr  FROM emp WHERE empno = 7566
+
+	UNION 
+
+          SELECT  e.empno,  e.ename, e.mgr  FROM  emp e  INNER JOIN team t ON t.empno = e.mgr
+) 
+SELECT   *  FROM  team;

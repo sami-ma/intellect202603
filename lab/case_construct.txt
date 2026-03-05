@@ -1,0 +1,75 @@
+Simple Case Constructs
+--------------------------------
+
+CREATE OR REPLACE PROCEDURE case1(x int)
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+DECLARE
+  msg  varchar(30);
+BEGIN
+  CASE x
+	WHEN 1, 2 THEN
+		msg := 'one or two';
+	WHEN 3 THEN
+		msg := 'Its 3';
+	ELSE
+		msg := 'other value than one or two';
+  END CASE;
+ raise notice  '%', msg;
+END;
+$BODY$;
+
+call  case1(2);
+
+Searched Case Construct
+------------------------------------
+
+CREATE OR REPLACE PROCEDURE case2(x int)
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+DECLARE
+  msg  varchar(30);
+BEGIN
+  CASE
+	WHEN x = 1 OR x = 2 THEN
+		msg := 'one or two';
+	WHEN x = 3 THEN
+		msg := 'Its 3';
+	ELSE
+		msg := 'other value than one or two';
+  END CASE;
+ raise notice  '%', msg;
+END;
+$BODY$;
+
+call  case2(4);
+
+
+
+CREATE OR REPLACE PROCEDURE case3(epno  int)
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+DECLARE
+  erec  record;
+  S  emp.sal%type;
+BEGIN
+
+ select * into erec from emp where empno = epno;
+  CASE  erec.deptno
+	WHEN 10 THEN
+		S = erec.sal + (erec.sal * 0.15);
+	WHEN 20 THEN
+		S = erec.sal + (erec.sal * 0.10);
+	WHEN 30 THEN
+		S = erec.sal + (erec.sal * 0.12);
+	ELSE
+		raise notice 'Department % not eligible for salary revision', erec.deptno;
+  END CASE;
+ raise notice  'EmpName : %  Deptno : %  Revised Salary : %', erec.ename, erec.deptno, S;
+END;
+$BODY$;
+
+call  case3(7788);

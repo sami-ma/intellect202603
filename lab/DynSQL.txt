@@ -1,0 +1,28 @@
+CREATE OR REPLACE PROCEDURE public.dyn1(int, varchar, varchar)
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+declare
+  mq text;
+BEGIN
+        mq := format('insert into dept values (%s, %L, %L)',$1,$2,$3);
+		execute mq;
+END;
+$BODY$;
+
+call dyn1(70,'EE', 'TT')
+
+
+
+CREATE OR REPLACE procedure dyn2(en varchar)  AS $$
+declare
+  mq text;
+  r record;
+BEGIN
+        mq := format('select * from emp where ename= %L',en);
+		execute mq into r;
+		raise notice '%',r;
+END;
+$$ LANGUAGE plpgsql;
+
+call dyn2('BLAKE');

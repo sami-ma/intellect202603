@@ -1,0 +1,24 @@
+
+
+Table:
+
+CREATE TABLE ddl_log (
+id serial, 
+username TEXT,
+tg_operation TEXT,
+ddl_command TEXT,
+event_time TIMESTAMP
+);
+
+Event Trigger Procedure
+
+CREATE OR REPLACE FUNCTION eventtrg1()
+RETURNS event_trigger AS $$
+BEGIN
+INSERT INTO ddl_log (username,tg_operation, ddl_command, event_time) values (current_user,tg_tag,current_query(),current_timestamp);
+END;
+$$ LANGUAGE plpgsql;
+
+
+Event Trigger
+CREATE EVENT TRIGGER event_log_tigger ON ddl_command_end EXECUTE FUNCTION eventtrg1();

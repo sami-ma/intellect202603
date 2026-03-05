@@ -1,0 +1,143 @@
+While Loop:
+---------------
+
+CREATE OR REPLACE PROCEDURE loop1()
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+DECLARE
+ x int default 1;
+BEGIN
+
+while  x <= 10  loop
+	raise notice  'x = %', x;
+	x := x + 1;
+end loop;
+END;
+$BODY$;
+
+call  loop1();
+
+Simple Loop
+----------------
+
+CREATE OR REPLACE PROCEDURE loop2()
+    LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+ x int default 1;
+BEGIN
+
+loop
+	raise notice  'x = %', x;
+	x := x + 1;
+	if x > 10 then
+	  exit;
+	end if;
+end loop;
+END;
+$BODY$;
+
+
+For Loop:
+-----------
+
+CREATE OR REPLACE PROCEDURE public.loop3()
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+DECLARE
+ x int default 1;
+BEGIN
+for x in 1..10 loop
+	raise notice  'x = %', x;
+end loop;
+END;
+$BODY$;
+
+
+
+For Loop With Reverse clause
+----------------------------------------
+
+CREATE OR REPLACE PROCEDURE loop5()
+    LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+ x int default 1;
+BEGIN
+for x in reverse 10..1  loop
+	raise notice  'x = %', x;
+end loop;
+END;
+$BODY$;
+
+call  loop5();
+
+For Loop with Increment
+---------------------------------
+
+CREATE OR REPLACE PROCEDURE public.loop4()
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+DECLARE
+ x int default 1;
+BEGIN
+for x in 1..10 by 2 loop
+	raise notice  'x = %', x;
+end loop;
+END;
+$BODY$;
+
+
+For Loop With Query
+----------------------------
+
+CREATE OR REPLACE PROCEDURE flwq()
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+DECLARE
+  erec  record;
+  S  emp.sal%type;
+BEGIN
+
+for  erec in select * from emp loop
+  CASE  erec.deptno
+	WHEN 10 THEN
+		S = erec.sal + (erec.sal * 0.15);
+	WHEN 20 THEN
+		S = erec.sal + (erec.sal * 0.10);
+	WHEN 30 THEN
+		S = erec.sal + (erec.sal * 0.12);
+	ELSE
+		raise notice 'Department % not eligible for salary revision', erec.deptno;
+  END CASE;
+ raise notice  'EmpName : %  Deptno : %  Revised Salary : %', erec.ename, erec.deptno, S;
+end loop;
+END;
+$BODY$;
+
+call flwq()
+
+For Each Loop
+--------------------
+
+CREATE FUNCTION sum(int[])
+RETURNS int
+AS $$
+DECLARE
+s int8 := 0;
+x int;
+BEGIN
+FOREACH x IN ARRAY $1 LOOP
+s := s + x;
+END LOOP;
+RETURN s;
+END;
+$$ LANGUAGE plpgsql;
+
+
+Execution:
+select sum(array [1,2,3]);

@@ -1,0 +1,95 @@
+Exception Example
+--------------------------
+
+Implicit Exception
+-----------------------
+
+CREATE OR REPLACE PROCEDURE exp(epno int)
+    LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+  erec emp%rowtype;
+BEGIN
+  select * into strict erec from emp where empno = epno;
+  raise notice 'Employee Name: % Salary : %', erec.ename, erec.sal;
+EXCEPTION
+   when no_data_found then raise exception 'Invalid emlployee number : %', epno;
+   when too_many_rows then raise exception 'Many Employees matches Employee number : %', epno;
+END;
+$BODY$;
+
+call exp(1234)
+
+
+create or replace procedure exp1(int, int) language plpgsql as
+$$
+declare
+
+  z float;
+
+begin
+
+  if ($2 = 0) then
+     raise;
+  end if;
+  z := $1 / $2;
+  raise notice 'result is %', z;
+
+end;
+ $$ ;
+
+call exp1(4,0)
+
+create or replace procedure exp3(int) language plpgsql as
+$$
+declare
+  r record;
+
+begin
+  select * into strict r from emp where empno = $1;
+  raise notice 'row is %', r;
+exception
+  when no_data_found then raise exception 'Invalid empno %', $1;
+  when others then raise exception 'Something went wrong';
+end;
+ $$ ;
+
+call exp3(777);
+
+create or replace procedure exp4(int, int) language plpgsql as
+$$
+declare
+  x int;
+begin
+
+
+ x := $1 / $2;
+
+  raise notice 'result is %', x;
+exception
+  when division_by_zero then raise exception 'Division by Zero: Given Inputs are % and %', $1, $2;
+  when others then raise exception 'Something went wrong';
+end;
+ $$ ;
+
+call exp4(5,0)
+
+create or replace procedure exp5(int) language plpgsql as
+$$
+declare
+  r record;
+
+begin
+  if ($1 < 1000) then
+   raise exception using errcode = 22000;
+  end if;
+  select * into strict r from emp where empno = $1;
+  raise notice 'row is %', r;
+exception
+  when data_exception then raise exception 'passed parameter must be greater than 1000. Given Value %', $1;
+  when no_data_found then raise exception 'Invalid empno %', $1;
+  when others then raise exception 'Something went wrong';
+end;
+ $$ ;
+
+call exp5(887)

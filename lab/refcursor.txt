@@ -1,0 +1,32 @@
+CREATE OR REPLACE FUNCTION refcur1() RETURNS refcursor AS $$
+declare
+  mc refcursor;
+  r record;
+BEGIN
+        OPEN mc FOR SELECT * FROM emp;
+        RETURN mc;
+END;
+$$ LANGUAGE plpgsql;
+
+begin;
+select refcur1() into mc;
+FETCH 4   from  "unnamed portal 1"
+commit;
+
+
+CREATE OR REPLACE procedure refcur2()  AS $$
+declare
+  mycur refcursor;
+  r record;
+BEGIN
+    mycur := refcur1();
+	  loop
+	      FETCH     from mycur into r;
+	      exit when not found;
+	      raise notice '%', r;
+	   end loop;
+     RETURN;
+END;
+$$ LANGUAGE plpgsql;
+
+call refcur2();

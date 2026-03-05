@@ -1,0 +1,4 @@
+prepare abc (int, varchar, varchar) as
+   insert into dept values ($1, $2, $3);
+
+execute abc(80,'aaa','ddd')
